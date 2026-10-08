@@ -1,4 +1,4 @@
-package com.example.Assignment
+package org.sopt.play
 
 import android.content.Intent
 import android.os.Bundle
@@ -29,14 +29,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.Assignment.ui.theme.AssignmentTheme
+import org.sopt.play.RegisterActivity
+import org.sopt.play.ui.theme.PlaySoptTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AssignmentTheme {
+            PlaySoptTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(modifier = Modifier.padding(innerPadding))
                 }
@@ -128,7 +129,7 @@ fun LoginScreen(modifier: Modifier= Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    AssignmentTheme {
+    PlaySoptTheme() {
         LoginScreen()
     }
 }

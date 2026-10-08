@@ -1,4 +1,4 @@
-package com.example.Assignment
+package org.sopt.play
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,14 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.Assignment.ui.theme.AssignmentTheme
+import org.sopt.play.ui.theme.PlaySoptTheme
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            AssignmentTheme {
+            PlaySoptTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting2(
                         name = "Android",
@@ -41,7 +41,7 @@ fun Greeting2(name: String, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview2() {
-    AssignmentTheme {
+    PlaySoptTheme() {
         Greeting2("Android")
     }
 }
