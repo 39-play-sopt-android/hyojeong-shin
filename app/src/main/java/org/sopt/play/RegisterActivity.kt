@@ -1,5 +1,6 @@
 package org.sopt.play
 
+import android.R
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -68,7 +70,8 @@ fun RegisterScreen(modifier: Modifier= Modifier,
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 32.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 60.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
 
@@ -76,25 +79,30 @@ fun RegisterScreen(modifier: Modifier= Modifier,
     ) {
         Text(
             text = "이메일로 회원가입",
-            fontSize = 32.sp
+            fontSize = 28.sp
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
 
         // 이름 입력
 
         Text("이름")
 
+        Spacer(modifier = Modifier.height(6.dp))
+
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = name,
             onValueChange = { name = it },
-            placeholder = { Text("홍길동") }
+            placeholder = { Text("홍길동", color= Color(0xFFD1D5D6)) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor =Color(0xFF505559),
+                unfocusedBorderColor = Color(0xFFD1D5D6)
 
+            )
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
 
 
@@ -102,16 +110,18 @@ fun RegisterScreen(modifier: Modifier= Modifier,
         // 이메일 입력
         Text("이메일주소")
 
+        Spacer(modifier = Modifier.height(6.dp))
+
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("abc@email.com") },
+            placeholder = { Text(text = "abc@email.com", color= Color(0xFFD1D5D6)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
                     if (email.isNotEmpty() && emailError) Color.Red
-                    else Color.Black,
-                unfocusedBorderColor = Color.Gray
+                    else Color(0xFF505559),
+                unfocusedBorderColor = Color(0xFFD1D5D6)
             )
         )
         if (email.isNotEmpty() && emailError) {
@@ -120,22 +130,23 @@ fun RegisterScreen(modifier: Modifier= Modifier,
         }
 
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
 
         //비밀번호 입력
         Text("비밀번호")
+        Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = password,
             onValueChange = { password = it },
-            placeholder = { Text("6자 이상의 비밀번호") },
+            placeholder = { Text(text = "6자 이상의 비밀번호", color= Color(0xFFD1D5D6)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
                     if (password.isNotEmpty() && passwordError) Color.Red
-                    else Color.Black,
-                unfocusedBorderColor = Color.Gray
+                    else Color(0xFF505559),
+                unfocusedBorderColor = Color(0xFFD1D5D6)
             ),
             visualTransformation = PasswordVisualTransformation(),
         )
@@ -144,22 +155,23 @@ fun RegisterScreen(modifier: Modifier= Modifier,
                 color= Color.Red)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
 
         // 비밀번호 확인
         Text("비밀번호 확인")
+        Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = confirmPw,
             onValueChange = { confirmPw = it },
-            placeholder = { Text("6자 이상의 비밀번호") },
+            placeholder = { Text("6자 이상의 비밀번호", color= Color(0xFFD1D5D6)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
                     if (confirmPw.isNotEmpty() && confirmPasswordError) Color.Red
-                    else Color.Black,
-                unfocusedBorderColor = Color.Gray,
+                    else Color(0xFF505559),
+                unfocusedBorderColor = Color(0xFFD1D5D6),
             ),
             visualTransformation = PasswordVisualTransformation()
         )
@@ -169,7 +181,7 @@ fun RegisterScreen(modifier: Modifier= Modifier,
                 color= Color.Red)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
 
         // 회원가입 버튼
@@ -184,6 +196,13 @@ fun RegisterScreen(modifier: Modifier= Modifier,
                 context.startActivity(intent)
             },
             enabled = !emailError && !passwordError && !confirmPasswordError,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color(0xFFF7F7F7),
+
+                disabledContainerColor = Color(0xFFF7F7F7),
+                disabledContentColor = Color(0xFFB2BABD)
+            ),
             modifier= Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)

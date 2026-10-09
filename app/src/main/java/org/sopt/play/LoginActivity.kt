@@ -1,5 +1,7 @@
 package org.sopt.play
 
+import org.sopt.play.R
+import androidx.compose.ui.text.font.Font
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -30,14 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import org.sopt.play.ui.theme.PlaySoptTheme
-import kotlin.jvm.java
-import kotlin.text.Typography.registered
 
 class LoginActivity : ComponentActivity() {
     private var registeredEmail=""
@@ -101,14 +102,15 @@ fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal =16.dp)
+            .padding(horizontal = 16.dp)
             .padding(top = 60.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
         Text(
             text = "이메일로 로그인하기",
-            fontSize = 32.sp
+            fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
+            fontSize = 28.sp
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -119,16 +121,15 @@ fun LoginScreen(
 
         OutlinedTextField(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("abc@email.com") },
+            placeholder = { Text("abc@email.com", color= Color(0xFFD1D5D6)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
                     if (email.isNotEmpty() && emailError) Color.Red
-                    else Color.Black,
-                unfocusedBorderColor = Color.Gray
+                    else Color(0xFF505559),
+                unfocusedBorderColor = Color(0xFFD1D5D6)
             ),
 
         )
@@ -144,15 +145,16 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             value = password,
             onValueChange = { password = it },
-            placeholder = { Text("6자 이상의 비밀번호") },
+            placeholder = { Text("6자 이상의 비밀번호", color= Color(0xFFD1D5D6)) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
                     if (password.isNotEmpty() && passwordError) Color.Red
-                    else Color.Black,
-                unfocusedBorderColor = Color.Gray,
+                    else Color(0xFF505559),
+                unfocusedBorderColor = Color(0xFFD1D5D6),
             ),
             visualTransformation = PasswordVisualTransformation()
 
@@ -172,8 +174,16 @@ fun LoginScreen(
                 onLoginClick(email,password)
             },
             enabled = !emailError && !passwordError,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Black,
+                contentColor = Color(0xFFF7F7F7),
+
+                disabledContainerColor = Color(0xFFF7F7F7),
+                disabledContentColor = Color(0xFFB2BABD)
+            ),
             modifier= Modifier
                 .fillMaxWidth()
+                .padding(16.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text("로그인")
@@ -183,14 +193,17 @@ fun LoginScreen(
         Row(
             modifier = Modifier
                 .requiredHeightIn()
-                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+                .align(Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("아직 계정이 없으신가요?")
+            Text("아직 계정이 없으신가요?", color = Color(0xFFB2BABD))
 
             TextButton(
                 onClick = onRegisterClick
             ) {
-                Text("회원가입하기")
+                Text("회원가입하기", color= Color.Black,
+                    )
             }
         }
     }
