@@ -93,7 +93,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf(value = "") }
     var password by remember { mutableStateOf(value = "") }
-    val emailError=!email.endsWith("@email.com")
+    val emailError=!email.contains("@") || !email.contains(".com")
     val passwordError=password.length<6
 
     val context = LocalContext.current
