@@ -136,7 +136,8 @@ fun RegisterScreen(modifier: Modifier= Modifier,
                     if (password.isNotEmpty() && passwordError) Color.Red
                     else Color.Black,
                 unfocusedBorderColor = Color.Gray
-            )
+            ),
+            visualTransformation = PasswordVisualTransformation(),
         )
         if (password.isNotEmpty() && passwordError) {
             Text(text = "비밀번호는 6자 이상 입력해주세요.",
@@ -182,7 +183,7 @@ fun RegisterScreen(modifier: Modifier= Modifier,
 
                 context.startActivity(intent)
             },
-            enabled = !emailError && !passwordError,
+            enabled = !emailError && !passwordError && !confirmPasswordError,
             modifier= Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
