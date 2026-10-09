@@ -19,7 +19,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlaySoptTheme {
-                LoginScreen()
+                LoginScreen(
+                    onLoginClick = {email, password ->},
+                    onRegisterClick = {})
             }
         }
     }

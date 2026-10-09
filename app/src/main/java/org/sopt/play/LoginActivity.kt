@@ -1,13 +1,11 @@
 package org.sopt.play
 
-import android.R.attr.enabled
-import android.R.attr.onClick
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +21,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,18 +34,50 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.sopt.play.RegisterActivity
+import androidx.core.content.ContextCompat.startActivity
 import org.sopt.play.ui.theme.PlaySoptTheme
 import kotlin.jvm.java
+import kotlin.text.Typography.registered
 
 class LoginActivity : ComponentActivity() {
+    private var registeredEmail=""
+    private var registeredPassword=""
+    private val registerLauncher=registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        result ->
+        if (result.resultCode==RESULT_OK) {
+            registeredEmail=result.data?.getStringExtra("email")?:""
+            registeredPassword=result.data?.getStringExtra("pw")?:""
+
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PlaySoptTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    LoginScreen(modifier = Modifier.padding(innerPadding))
+                    LoginScreen(
+                        onLoginClick={ email, password ->
+                            if (email==registeredEmail && password==registeredPassword) {
+                                val intent= Intent(
+                                    this@LoginActivity,
+                                    MainActivity::class.java
+                                ).apply {
+                                    flags= Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                }
+                                startActivity(intent)
+                            }
+
+                        },
+                        onRegisterClick={
+                            registerLauncher.launch(
+                                Intent(this@LoginActivity, RegisterActivity::class.java)
+                            )
+                        },
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
@@ -56,92 +85,100 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoginScreen(modifier: Modifier= Modifier) {
+fun LoginScreen(
+    modifier: Modifier= Modifier,
+    onLoginClick: (String, String) -> Unit,
+    onRegisterClick: () -> Unit
+) {
     var email by remember { mutableStateOf(value = "") }
-    var pw by remember { mutableStateOf(value = "") }
+    var password by remember { mutableStateOf(value = "") }
     val emailError=!email.endsWith("@email.com")
-    val pwError=pw.length<6
+    val passwordError=password.length<6
 
     val context = LocalContext.current
+
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 32.dp),
+            .padding(horizontal =16.dp)
+            .padding(top = 60.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
-
-
     ) {
         Text(
             text = "이메일로 로그인하기",
             fontSize = 32.sp
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Text("이메일주소")
 
+        Spacer(modifier = Modifier.height(6.dp))
+
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             value = email,
             onValueChange = { email = it },
             placeholder = { Text("abc@email.com") },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (email.isNotEmpty() && !email.endsWith("@email.com")) Color.Red
+                    if (email.isNotEmpty() && emailError) Color.Red
                     else Color.Black,
                 unfocusedBorderColor = Color.Gray
             ),
 
         )
 
-        if (email.isNotEmpty() && !email.endsWith("@email.com")) {
+        if (email.isNotEmpty() && emailError) {
             Text(text = "올바른 이메일을 입력해주세요.",
                 color = Color.Red)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text("비밀번호")
+        Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = pw,
-            onValueChange = { pw = it },
+            value = password,
+            onValueChange = { password = it },
             placeholder = { Text("6자 이상의 비밀번호") },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (pw.isNotEmpty() && pw.length<6) Color.Red
+                    if (password.isNotEmpty() && passwordError) Color.Red
                     else Color.Black,
                 unfocusedBorderColor = Color.Gray,
             ),
             visualTransformation = PasswordVisualTransformation()
 
         )
+        Spacer(modifier = Modifier.height(6.dp))
 
-        if (pw.isNotEmpty() && pw.length<6) {
+        if (password.isNotEmpty() && passwordError) {
             Text(text = "비밀번호는 6자 이상 입력해주세요.",
                 color= Color.Red)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
+        //로그인버튼
         Button(
             onClick = {
-                val intent = Intent(context, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                            Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                context.startActivity(intent)
+                onLoginClick(email,password)
             },
-            enabled = !emailError && !pwError,
+            enabled = !emailError && !passwordError,
             modifier= Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
             Text("로그인")
         }
+        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier
@@ -151,14 +188,7 @@ fun LoginScreen(modifier: Modifier= Modifier) {
             Text("아직 계정이 없으신가요?")
 
             TextButton(
-                onClick = {
-                    val intent = Intent(context, RegisterActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                                Intent.FLAG_ACTIVITY_NEW_TASK
-                    }
-
-                    context.startActivity(intent)
-                }
+                onClick = onRegisterClick
             ) {
                 Text("회원가입하기")
             }
@@ -171,7 +201,10 @@ fun LoginScreen(modifier: Modifier= Modifier) {
 @Composable
 fun LoginScreenPreview() {
     PlaySoptTheme() {
-        LoginScreen()
+        LoginScreen(
+            onLoginClick = {email, password ->},
+            onRegisterClick = {}
+        )
     }
 }
 
