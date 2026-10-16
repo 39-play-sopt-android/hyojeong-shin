@@ -128,7 +128,10 @@ fun LoginScreen(
                 .fillMaxWidth(),
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("abc@email.com", color= SoptColor.Gray2) },
+            textStyle = SoptTypography.m18,
+            placeholder = { Text("abc@email.com",
+                style = SoptTypography.m18,
+                color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
                     if (email.isNotEmpty() && emailError) SoptColor.Red
@@ -156,6 +159,7 @@ fun LoginScreen(
                 .fillMaxWidth(),
             value = password,
             onValueChange = { password = it },
+            textStyle = SoptTypography.m18,
             placeholder = {
                 Text("6자 이상의 비밀번호",
                 style = SoptTypography.m18,
