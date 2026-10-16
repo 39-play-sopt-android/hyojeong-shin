@@ -11,12 +11,20 @@ import org.sopt.play.R
 
 // Set of Material typography styles to start with
 private val Pretendard= FontFamily(
+    Font(R.font.pretendard_regular, FontWeight.Normal),
     Font(R.font.pretendard_medium, FontWeight.Medium),
     Font(R.font.pretendard_semibold, FontWeight.SemiBold),
     Font(R.font.pretendard_bold, FontWeight.Bold)
 )
 
 object SoptTypography {
+    val r14= TextStyle(
+        fontFamily = Pretendard,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
+        lineHeight = 1.2.em,
+        letterSpacing = (-0.01).em
+    )
 
     val m14= TextStyle(
         fontFamily = Pretendard,
