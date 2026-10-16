@@ -4,6 +4,7 @@ import org.sopt.play.R
 import androidx.compose.ui.text.font.Font
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -39,6 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.sopt.play.ui.theme.PlaySoptTheme
+import org.sopt.play.ui.theme.SoptColor
+import org.sopt.play.ui.theme.SoptTypography
 
 class LoginActivity : ComponentActivity() {
     private var registeredEmail=""
@@ -93,7 +95,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf(value = "") }
     var password by remember { mutableStateOf(value = "") }
-    val emailError=!email.contains("@") || !email.contains(".com")
+    val emailError=!Patterns.EMAIL_ADDRESS.matcher(email).matches()
     val passwordError=password.length<6
 
     val context = LocalContext.current
@@ -109,13 +111,15 @@ fun LoginScreen(
     ) {
         Text(
             text = "이메일로 로그인하기",
-            fontFamily = FontFamily(Font(R.font.pretendard_semibold)),
-            fontSize = 28.sp
+            color = SoptColor.Black,
+            style = SoptTypography.b28
         )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        Text("이메일주소")
+        Text("이메일주소",
+            color = SoptColor.Gray6,
+            style = SoptTypography.sb16)
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -124,24 +128,27 @@ fun LoginScreen(
                 .fillMaxWidth(),
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("abc@email.com", color= Color(0xFFD1D5D6)) },
+            placeholder = { Text("abc@email.com", color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (email.isNotEmpty() && emailError) Color.Red
-                    else Color(0xFF505559),
-                unfocusedBorderColor = Color(0xFFD1D5D6)
+                    if (email.isNotEmpty() && emailError) SoptColor.Red
+                    else SoptColor.Gray5,
+                unfocusedBorderColor = SoptColor.Gray2
             ),
 
         )
 
         if (email.isNotEmpty() && emailError) {
             Text(text = "올바른 이메일을 입력해주세요.",
-                color = Color.Red)
+                style = SoptTypography.m18,
+                color = SoptColor.Red)
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Text("비밀번호")
+        Text("비밀번호",
+            color = SoptColor.Gray6,
+            style = SoptTypography.sb16)
         Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
@@ -149,12 +156,15 @@ fun LoginScreen(
                 .fillMaxWidth(),
             value = password,
             onValueChange = { password = it },
-            placeholder = { Text("6자 이상의 비밀번호", color= Color(0xFFD1D5D6)) },
+            placeholder = {
+                Text("6자 이상의 비밀번호",
+                style = SoptTypography.m18,
+                color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (password.isNotEmpty() && passwordError) Color.Red
-                    else Color(0xFF505559),
-                unfocusedBorderColor = Color(0xFFD1D5D6),
+                    if (password.isNotEmpty() && passwordError) SoptColor.Red
+                    else SoptColor.Gray5,
+                unfocusedBorderColor = SoptColor.Gray2,
             ),
             visualTransformation = PasswordVisualTransformation()
 
@@ -163,7 +173,7 @@ fun LoginScreen(
 
         if (password.isNotEmpty() && passwordError) {
             Text(text = "비밀번호는 6자 이상 입력해주세요.",
-                color= Color.Red)
+                color= SoptColor.Red)
         }
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -175,18 +185,21 @@ fun LoginScreen(
             },
             enabled = !emailError && !passwordError,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color(0xFFF7F7F7),
+                containerColor = SoptColor.Black,
+                contentColor = SoptColor.Gray1,
 
-                disabledContainerColor = Color(0xFFF7F7F7),
-                disabledContentColor = Color(0xFFB2BABD)
+                disabledContainerColor = SoptColor.Gray1,
+                disabledContentColor = SoptColor.Gray3
             ),
             modifier= Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text("로그인")
+            Text("로그인",
+                style = SoptTypography.sb14,
+                color = SoptColor.Gray3
+                )
         }
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -197,12 +210,16 @@ fun LoginScreen(
                 .align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("아직 계정이 없으신가요?", color = Color(0xFFB2BABD))
+            Text("아직 계정이 없으신가요?",
+                color = SoptColor.Gray3,
+                style = SoptTypography.m14)
 
             TextButton(
                 onClick = onRegisterClick
             ) {
-                Text("회원가입하기", color= Color.Black,
+                Text("회원가입하기",
+                    color= SoptColor.Black,
+                    style = SoptTypography.m14
                     )
             }
         }
@@ -220,4 +237,3 @@ fun LoginScreenPreview() {
         )
     }
 }
-

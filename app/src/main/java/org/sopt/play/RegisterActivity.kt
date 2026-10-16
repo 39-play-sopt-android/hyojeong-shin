@@ -1,8 +1,7 @@
 package org.sopt.play
 
-import android.R
-import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,13 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import org.sopt.play.ui.theme.SoptColor
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.sopt.play.ui.theme.PlaySoptTheme
+import org.sopt.play.ui.theme.SoptTypography
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,17 +53,18 @@ class RegisterActivity : ComponentActivity() {
 }
 
 @Composable
-fun RegisterScreen(modifier: Modifier= Modifier,
-                   onRegisterClick: (String, String) -> Unit) {
+fun RegisterScreen(
+        modifier: Modifier= Modifier,
+        onRegisterClick: (String, String) -> Unit
+        )
+{
     var name by remember { mutableStateOf(value = "") }
     var email by remember { mutableStateOf(value = "") }
     var password by remember { mutableStateOf(value = "") }
     var confirmPw by remember { mutableStateOf(value = "") }
-    val emailError=!email.contains("@") || !email.contains(".com")
+    val emailError=!Patterns.EMAIL_ADDRESS.matcher(email).matches()
     val passwordError=password.length<6
     val confirmPasswordError = confirmPw!=password
-
-    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -74,12 +73,11 @@ fun RegisterScreen(modifier: Modifier= Modifier,
             .padding(top = 60.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
-
-
     ) {
         Text(
             text = "이메일로 회원가입",
-            fontSize = 28.sp
+            color = SoptColor.Black,
+            style = SoptTypography.b28
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -87,7 +85,9 @@ fun RegisterScreen(modifier: Modifier= Modifier,
 
         // 이름 입력
 
-        Text("이름")
+        Text("이름",
+            color = SoptColor.Gray6,
+            style = SoptTypography.sb16)
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -95,20 +95,22 @@ fun RegisterScreen(modifier: Modifier= Modifier,
             modifier = Modifier.fillMaxWidth(),
             value = name,
             onValueChange = { name = it },
-            placeholder = { Text("홍길동", color= Color(0xFFD1D5D6)) },
+            placeholder = { Text("홍길동",
+                style = SoptTypography.m18,
+                color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor =Color(0xFF505559),
-                unfocusedBorderColor = Color(0xFFD1D5D6)
+                focusedBorderColor =SoptColor.Gray5,
+                unfocusedBorderColor = SoptColor.Gray2
 
             )
         )
         Spacer(modifier = Modifier.height(32.dp))
 
 
-
-
         // 이메일 입력
-        Text("이메일주소")
+        Text("이메일주소",
+            color = SoptColor.Gray6,
+            style = SoptTypography.sb16)
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -116,17 +118,20 @@ fun RegisterScreen(modifier: Modifier= Modifier,
             modifier = Modifier.fillMaxWidth(),
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text(text = "abc@email.com", color= Color(0xFFD1D5D6)) },
+            placeholder = { Text(text = "abc@email.com",
+                style = SoptTypography.m18,
+                color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (email.isNotEmpty() && emailError) Color.Red
-                    else Color(0xFF505559),
-                unfocusedBorderColor = Color(0xFFD1D5D6)
+                    if (email.isNotEmpty() && emailError) SoptColor.Red
+                    else SoptColor.Gray5,
+                unfocusedBorderColor = SoptColor.Gray2
             )
         )
         if (email.isNotEmpty() && emailError) {
             Text(text = "올바른 이메일을 입력해주세요.",
-                color = Color.Red)
+                style = SoptTypography.m18,
+                color = SoptColor.Red)
         }
 
 
@@ -134,51 +139,61 @@ fun RegisterScreen(modifier: Modifier= Modifier,
 
 
         //비밀번호 입력
-        Text("비밀번호")
+        Text("비밀번호",
+            color = SoptColor.Gray6,
+            style = SoptTypography.sb16)
         Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = password,
             onValueChange = { password = it },
-            placeholder = { Text(text = "6자 이상의 비밀번호", color= Color(0xFFD1D5D6)) },
+            placeholder = { Text(text = "6자 이상의 비밀번호",
+                style = SoptTypography.m18,
+                color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (password.isNotEmpty() && passwordError) Color.Red
-                    else Color(0xFF505559),
-                unfocusedBorderColor = Color(0xFFD1D5D6)
+                    if (password.isNotEmpty() && passwordError) SoptColor.Red
+                    else SoptColor.Gray5,
+                unfocusedBorderColor = SoptColor.Gray2
             ),
             visualTransformation = PasswordVisualTransformation(),
         )
         if (password.isNotEmpty() && passwordError) {
             Text(text = "비밀번호는 6자 이상 입력해주세요.",
-                color= Color.Red)
+                style = SoptTypography.m18,
+                color= SoptColor.Red)
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
 
         // 비밀번호 확인
-        Text("비밀번호 확인")
+        Text("비밀번호 확인",
+            color = SoptColor.Gray6,
+            style = SoptTypography.sb16)
         Spacer(modifier = Modifier.height(6.dp))
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = confirmPw,
             onValueChange = { confirmPw = it },
-            placeholder = { Text("6자 이상의 비밀번호", color= Color(0xFFD1D5D6)) },
+            placeholder = { Text("6자 이상의 비밀번호",
+                style = SoptTypography.m18,
+                color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (confirmPw.isNotEmpty() && confirmPasswordError) Color.Red
-                    else Color(0xFF505559),
-                unfocusedBorderColor = Color(0xFFD1D5D6),
+                    if (confirmPw.isNotEmpty() && confirmPasswordError) SoptColor.Red
+                    else SoptColor.Gray5,
+                unfocusedBorderColor = SoptColor.Gray2,
             ),
             visualTransformation = PasswordVisualTransformation()
         )
 
         if (password.isNotEmpty() && confirmPasswordError) {
-            Text(text = "비밀번호는 6자 이상 입력해주세요.",
-                color= Color.Red)
+            Text(text = "비밀번호와 동일하게 입력해주세요.",
+                style = SoptTypography.m18,
+                color= SoptColor.Red)
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -187,27 +202,22 @@ fun RegisterScreen(modifier: Modifier= Modifier,
         // 회원가입 버튼
         Button(
             onClick = {
-                val intent = Intent(context, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or
-                            Intent.FLAG_ACTIVITY_NEW_TASK
-                onRegisterClick(email,password)
-                }
-
-                context.startActivity(intent)
+                onRegisterClick(email, password)
             },
             enabled = !emailError && !passwordError && !confirmPasswordError,
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Black,
-                contentColor = Color(0xFFF7F7F7),
+                containerColor = SoptColor.Black,
+                contentColor = SoptColor.Gray1,
 
-                disabledContainerColor = Color(0xFFF7F7F7),
-                disabledContentColor = Color(0xFFB2BABD)
+                disabledContainerColor = SoptColor.Gray1,
+                disabledContentColor = SoptColor.Gray3
             ),
             modifier= Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text("회원가입")
+            Text("회원가입",
+                style = SoptTypography.sb14)
         }
 
 
