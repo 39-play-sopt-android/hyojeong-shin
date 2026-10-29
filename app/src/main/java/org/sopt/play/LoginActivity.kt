@@ -43,6 +43,8 @@ import org.sopt.play.ui.theme.SoptColor
 import org.sopt.play.ui.theme.SoptTypography
 
 class LoginActivity : ComponentActivity() {
+    private var email by mutableStateOf("")
+    private var password by mutableStateOf("")
     private var registeredEmail=""
     private var registeredPassword=""
     private val registerLauncher=registerForActivityResult(
@@ -53,6 +55,9 @@ class LoginActivity : ComponentActivity() {
             registeredEmail=result.data?.getStringExtra("email")?:""
             registeredPassword=result.data?.getStringExtra("pw")?:""
 
+            email = registeredEmail
+            password = registeredPassword
+
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +67,10 @@ class LoginActivity : ComponentActivity() {
             PlaySoptTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(
+                        email = email,
+                        password = password,
+                        onEmailChange = { email = it },
+                        onPasswordChange = { password = it },
                         onLoginClick={ email, password ->
                             if (email==registeredEmail && password==registeredPassword) {
                                 val intent= Intent(
@@ -89,12 +98,14 @@ class LoginActivity : ComponentActivity() {
 
 @Composable
 fun LoginScreen(
+    email: String,
+    password: String,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
     modifier: Modifier= Modifier,
     onLoginClick: (String, String) -> Unit,
     onRegisterClick: () -> Unit
 ) {
-    var email by remember { mutableStateOf(value = "") }
-    var password by remember { mutableStateOf(value = "") }
     val emailError=!Patterns.EMAIL_ADDRESS.matcher(email).matches()
     val passwordError=password.length<6
 
@@ -127,7 +138,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             value = email,
-            onValueChange = { email = it },
+            onValueChange = onEmailChange,
             textStyle = SoptTypography.m18,
             placeholder = { Text("abc@email.com",
                 style = SoptTypography.m18,
@@ -158,7 +169,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             value = password,
-            onValueChange = { password = it },
+            onValueChange = onPasswordChange,
             textStyle = SoptTypography.m18,
             placeholder = {
                 Text("6자 이상의 비밀번호",
@@ -236,7 +247,11 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     PlaySoptTheme() {
         LoginScreen(
-            onLoginClick = {email, password ->},
+            email = "abc@email.com",
+            password = "123456",
+            onEmailChange = {},
+            onPasswordChange = {},
+            onLoginClick = { email, password -> },
             onRegisterClick = {}
         )
     }

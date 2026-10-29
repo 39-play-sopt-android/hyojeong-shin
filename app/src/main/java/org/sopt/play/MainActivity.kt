@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
@@ -41,10 +43,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlaySoptTheme() {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerpading ->
-                    MainScreen(modifier = Modifier.padding(innerpading)
-                    )}
-
+                MainScreen()
             }
         }
     }
@@ -54,16 +53,24 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(
     modifier: Modifier= Modifier
 ) {
-    Column(
-        modifier= Modifier
-            .fillMaxWidth()
-
-    ) {
-        MainTopBar()
-        HomeBanner()
-        MainTabMenu()
-        HomeCategory()
-        HomeProductGrid()
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            Column(modifier = Modifier.statusBarsPadding()) {
+                MainTopBar()
+                MainTabMenu()
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            HomeBanner()
+            HomeCategory()
+            HomeProductGrid()
+        }
     }
 
 }
@@ -93,23 +100,7 @@ fun MainTopBar() {
 
 }
 
-@Composable
-fun MainTabMenu() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(rememberScrollState())
 
-    ) {
-        TabMenuButton("2배적립")
-        TabMenuButton("홈")
-        TabMenuButton("셀렉티드")
-        TabMenuButton("브랜드")
-        TabMenuButton("뷰티")
-        TabMenuButton("라이프")
-        TabMenuButton("랭킹")
-    }
-}
 
 
 @Composable
@@ -155,38 +146,6 @@ fun HomeBanner() {
     }
 }
 
-@Composable
-fun HomeCategory() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(115.dp)
-            .padding(
-                horizontal = 16.dp,
-                vertical = 20.dp
-            )
-    ) {
-        Text("신효정님을 위한 추천 아이템")
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            CategoryButton("전체")
-            CategoryButton("상의")
-            CategoryButton("팬츠")
-            CategoryButton("원피스")
-            CategoryButton("아우터")
-            CategoryButton("스커트")
-            CategoryButton("슈즈")
-            CategoryButton("가방")
-            CategoryButton("이너웨어/잠옷")
-            CategoryButton("폰꾸미기")
-        }
-    }
-}
 
 
 @Composable
@@ -198,6 +157,14 @@ fun HomeProductGrid() {
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
+        item (span = { GridItemSpan(maxLineSpan)}) {
+            HomeBanner()
+        }
+
+        item (span = { GridItemSpan(maxLineSpan)}) {
+            HomeCategory()
+        }
+
         items(products.size) { index ->
             Column(
                 modifier = Modifier
