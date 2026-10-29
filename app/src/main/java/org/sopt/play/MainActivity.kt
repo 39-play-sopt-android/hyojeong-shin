@@ -8,8 +8,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key.Companion.H
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.sopt.play.ui.theme.PlaySoptTheme
@@ -67,8 +70,6 @@ fun MainScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            HomeBanner()
-            HomeCategory()
             HomeProductGrid()
         }
     }
@@ -105,44 +106,32 @@ fun MainTopBar() {
 
 @Composable
 fun HomeBanner() {
-    Row(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 8.dp)
-            .horizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Image(
-            painter = painterResource(R.drawable.banner1),
-            contentDescription = null,
-            modifier = Modifier.size(
-                width = 328.dp,
-                height = 195.dp
-            ),
-            contentScale = ContentScale.FillBounds
-        )
+        val bannerWidth = maxWidth
 
-        Image(
-            painter = painterResource(R.drawable.banner2),
-            contentDescription = null,
-            modifier = Modifier.size(
-                width = 328.dp,
-                height = 195.dp),
-            contentScale = ContentScale.FillBounds
-        )
-
-        Image(
-            painter = painterResource(R.drawable.banner3),
-            contentDescription = null,
-            modifier = Modifier.size(
-                width = 328.dp,
-                height = 195.dp
-                ),
-            contentScale = ContentScale.FillBounds
-        )
-
+        Row(
+            modifier = Modifier.horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            listOf(
+                R.drawable.banner1,
+                R.drawable.banner2,
+                R.drawable.banner3
+            ).forEach { image ->
+                Image(
+                    painter = painterResource(image),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(bannerWidth)
+                        .aspectRatio(328f / 195f),
+                    contentScale = ContentScale.FillBounds
+                )
+            }
+        }
     }
 }
 
@@ -168,15 +157,15 @@ fun HomeProductGrid() {
         items(products.size) { index ->
             Column(
                 modifier = Modifier
-                    .width(176.dp)
-                    .height(315.dp)
+                    .fillMaxWidth()
+                    .aspectRatio(176f / 315f)
             ) {
                 Image(
                     painter = painterResource(products[index].image),
                     contentDescription = null,
                     modifier = Modifier
-                        .width(176.dp)
-                        .height(220.dp),
+                        .fillMaxWidth()
+                        .aspectRatio(176f / 220f),
                     contentScale = ContentScale.FillBounds
                 )
                 Column(
@@ -190,7 +179,9 @@ fun HomeProductGrid() {
                         style = SoptTypography.m14)
                     Text(products[index].name,
                         color = SoptColor.Black,
-                        style = SoptTypography.r14)
+                        style = SoptTypography.r14,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
                 }
 
             }
