@@ -23,30 +23,37 @@ import org.sopt.play.ui.theme.SoptTypography
 
 @Composable
 fun ChipButton(
-    text: String
+    chip: String,
+    isSelected: Boolean,
+    onChipClick:(String)-> Unit
 ) {
     Button(
-        onClick = {},
+        onClick = {onChipClick(chip)},
         shape = RoundedCornerShape(6.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = SoptColor.White,
+            containerColor = if (isSelected) SoptColor.Gray5
+                else SoptColor.White
         ),
         border = BorderStroke(
                 width=1.dp,
-                color = SoptColor.Gray2
+                color = if (isSelected) SoptColor.Gray5
+                    else SoptColor.Gray2
                 ),
         modifier = Modifier,
         contentPadding= PaddingValues(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        Text(text = text,
-            color = SoptColor.Gray5,
+        Text(text = chip,
+            color = if (isSelected) SoptColor.White else SoptColor.Gray5,
             style = SoptTypography.m14,
             maxLines = 1)
     }
 }
 
 @Composable
-fun HomeCategory() {
+fun HomeCategory(
+    selectedChip: String,
+    onChipClick: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,16 +72,16 @@ fun HomeCategory() {
                 .horizontalScroll(rememberScrollState()),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            ChipButton("전체")
-            ChipButton("상의")
-            ChipButton("팬츠")
-            ChipButton("원피스")
-            ChipButton("아우터")
-            ChipButton("스커트")
-            ChipButton("슈즈")
-            ChipButton("가방")
-            ChipButton("이너웨어/잠옷")
-            ChipButton("폰꾸미기")
+            ChipButton("전체", isSelected = selectedChip == "전체", onChipClick = onChipClick)
+            ChipButton("상의", isSelected = selectedChip == "상의", onChipClick = onChipClick)
+            ChipButton("팬츠", isSelected = selectedChip == "팬츠", onChipClick = onChipClick)
+            ChipButton("원피스", isSelected = selectedChip == "원피스", onChipClick = onChipClick)
+            ChipButton("아우터", isSelected = selectedChip == "아우터", onChipClick = onChipClick)
+            ChipButton("스커트", isSelected = selectedChip == "스커트", onChipClick = onChipClick)
+            ChipButton("슈즈", isSelected = selectedChip == "슈즈", onChipClick = onChipClick)
+            ChipButton("가방", isSelected = selectedChip == "가방", onChipClick = onChipClick)
+            ChipButton("이너웨어/잠옷", isSelected = selectedChip == "이너웨어/잠옷", onChipClick = onChipClick)
+            ChipButton("폰꾸미기", isSelected = selectedChip == "폰꾸미기", onChipClick = onChipClick)
         }
     }
 }

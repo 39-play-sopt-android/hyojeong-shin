@@ -1,10 +1,10 @@
 package org.sopt.play
 
 import android.os.Bundle
-import android.util.Patterns
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,10 +19,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.sopt.play.ui.theme.SoptColor
@@ -33,13 +29,28 @@ import org.sopt.play.ui.theme.PlaySoptTheme
 import org.sopt.play.ui.theme.SoptTypography
 
 class RegisterActivity : ComponentActivity() {
+    private val registerViewModel by viewModels<RegisterViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PlaySoptTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RegisterScreen(modifier = Modifier.padding(innerPadding),
+                    RegisterScreen(
+                        name = registerViewModel.name,
+                        email = registerViewModel.email,
+                        password = registerViewModel.password,
+                        confirmPassword = registerViewModel.confirmPassword,
+                        emailError = registerViewModel.emailError,
+                        passwordError = registerViewModel.passwordError,
+                        confirmPasswordError = registerViewModel.confirmPasswordError,
+                        canRegister = registerViewModel.canRegister,
+                        onNameChange = registerViewModel::onNameChange,
+                        onEmailChange = registerViewModel::onEmailChange,
+                        onPasswordChange = registerViewModel::onPasswordChange,
+                        onConfirmPwChange = registerViewModel::onConfirmPwChange,
+                        modifier = Modifier.padding(innerPadding),
                         onRegisterClick={ email, pw ->
                             intent.putExtra("email", email)
                             intent.putExtra("pw",pw)
@@ -54,17 +65,22 @@ class RegisterActivity : ComponentActivity() {
 
 @Composable
 fun RegisterScreen(
-        modifier: Modifier= Modifier,
-        onRegisterClick: (String, String) -> Unit
+    name: String,
+    email: String,
+    password: String,
+    confirmPassword: String,
+    emailError: Boolean,
+    passwordError: Boolean,
+    confirmPasswordError: Boolean,
+    canRegister: Boolean,
+    onNameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPwChange: (String) -> Unit,
+    modifier: Modifier= Modifier,
+    onRegisterClick: (String, String) -> Unit
         )
 {
-    var name by remember { mutableStateOf(value = "") }
-    var email by remember { mutableStateOf(value = "") }
-    var password by remember { mutableStateOf(value = "") }
-    var confirmPw by remember { mutableStateOf(value = "") }
-    val emailError=!Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    val passwordError=password.length<6
-    val confirmPasswordError = confirmPw!=password
 
     Column(
         modifier = modifier
@@ -94,7 +110,7 @@ fun RegisterScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = name,
-            onValueChange = { name = it },
+            onValueChange = onNameChange,
             textStyle = SoptTypography.m18,
             placeholder = { Text("홍길동",
                 style = SoptTypography.m18,
@@ -118,7 +134,7 @@ fun RegisterScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = email,
-            onValueChange = { email = it },
+            onValueChange = onEmailChange,
             textStyle = SoptTypography.m18,
             placeholder = { Text(text = "abc@email.com",
                 style = SoptTypography.m18,
@@ -149,7 +165,7 @@ fun RegisterScreen(
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = password,
-            onValueChange = { password = it },
+            onValueChange = onPasswordChange,
             textStyle = SoptTypography.m18,
             placeholder = { Text(text = "6자 이상의 비밀번호",
                 style = SoptTypography.m18,
@@ -179,15 +195,15 @@ fun RegisterScreen(
 
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = confirmPw,
-            onValueChange = { confirmPw = it },
+            value = confirmPassword,
+            onValueChange = onConfirmPwChange,
             textStyle = SoptTypography.m18,
             placeholder = { Text("6자 이상의 비밀번호",
                 style = SoptTypography.m18,
                 color= SoptColor.Gray2) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor =
-                    if (confirmPw.isNotEmpty() && confirmPasswordError) SoptColor.Red
+                    if (confirmPassword.isNotEmpty() && confirmPasswordError) SoptColor.Red
                     else SoptColor.Gray5,
                 unfocusedBorderColor = SoptColor.Gray2,
             ),
@@ -208,7 +224,7 @@ fun RegisterScreen(
             onClick = {
                 onRegisterClick(email, password)
             },
-            enabled = !emailError && !passwordError && !confirmPasswordError,
+            enabled = canRegister,
             colors = ButtonDefaults.buttonColors(
                 containerColor = SoptColor.Black,
                 contentColor = SoptColor.Gray1,
@@ -236,6 +252,18 @@ fun RegisterScreen(
 fun RegisterScreenPreview() {
     PlaySoptTheme() {
         RegisterScreen(
+            name = "홍길동",
+            email = "abc@email.com",
+            password = "123456",
+            confirmPassword = "123456",
+            emailError = false,
+            passwordError = false,
+            confirmPasswordError = false,
+            canRegister = true,
+            onNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onConfirmPwChange = {},
             onRegisterClick = {email, password ->}
         )
     }

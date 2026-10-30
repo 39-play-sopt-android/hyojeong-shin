@@ -5,9 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,29 +26,35 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key.Companion.H
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import org.sopt.play.ui.theme.PlaySoptTheme
 import org.sopt.play.ui.theme.SoptColor
 import org.sopt.play.ui.theme.SoptTypography
+import kotlin.getValue
 
 
 class MainActivity : ComponentActivity() {
+    private val mainViewModel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PlaySoptTheme() {
-                MainScreen()
+                MainScreen(viewModel=mainViewModel)
             }
         }
     }
@@ -54,6 +62,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
+    viewModel: MainViewModel,
     modifier: Modifier= Modifier
 ) {
     Scaffold(
@@ -61,7 +70,10 @@ fun MainScreen(
         topBar = {
             Column(modifier = Modifier.statusBarsPadding()) {
                 MainTopBar()
-                MainTabMenu()
+                MainTabMenu(
+                    selectedMenu = viewModel.selectedMenu,
+                    onMenuClick = { menu -> viewModel.onMenuClick(menu) }
+                )
             }
         }
     ) { innerPadding ->
@@ -70,7 +82,12 @@ fun MainScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            HomeProductGrid()
+            HomeProductGrid(
+                selectedChip = viewModel.selectedChip,
+                onChipClick = { chip -> viewModel.onChipClick(chip) },
+                likedProducts = viewModel.likedProducts,
+                onLikeClick = { index -> viewModel.onLikeClick(index) }
+            )
         }
     }
 
@@ -138,7 +155,12 @@ fun HomeBanner() {
 
 
 @Composable
-fun HomeProductGrid() {
+fun HomeProductGrid(
+    selectedChip: String,
+    onChipClick: (String) -> Unit,
+    likedProducts: Set<Int>,
+    onLikeClick: (Int) -> Unit
+) {
 
 
     LazyVerticalGrid(
@@ -151,23 +173,47 @@ fun HomeProductGrid() {
         }
 
         item (span = { GridItemSpan(maxLineSpan)}) {
-            HomeCategory()
+            HomeCategory(
+                selectedChip = selectedChip,
+                onChipClick = onChipClick
+            )
         }
 
         items(products.size) { index ->
+            val isLiked = index in likedProducts
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(176f / 315f)
             ) {
-                Image(
-                    painter = painterResource(products[index].image),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(176f / 220f),
-                    contentScale = ContentScale.FillBounds
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Image(
+                        painter = painterResource(products[index].image),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(176f / 220f),
+                        contentScale = ContentScale.FillBounds
+                    )
+                    IconButton(
+                        onClick = { onLikeClick(index) },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                if (isLiked) R.drawable.ic_favorite_fill
+                                else R.drawable.ic_favorite
+                            ),
+                            contentDescription = if (isLiked) "좋아요 취소" else "좋아요",
+                            tint = Color.Unspecified
+                        )
+                    }
+                }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -193,6 +239,6 @@ fun HomeProductGrid() {
 @Composable
 fun GreetingPreview() {
     PlaySoptTheme() {
-        MainScreen()
+        MainScreen(MainViewModel())
     }
 }
