@@ -1,5 +1,6 @@
 package org.sopt.play
 
+import android.R.attr.password
 import org.sopt.play.R
 import androidx.compose.ui.text.font.Font
 import android.content.Intent
@@ -9,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,25 +40,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.view.WindowCompat.enableEdgeToEdge
 import org.sopt.play.ui.theme.PlaySoptTheme
 import org.sopt.play.ui.theme.SoptColor
 import org.sopt.play.ui.theme.SoptTypography
+import kotlin.jvm.java
 
 class LoginActivity : ComponentActivity() {
-    private var email by mutableStateOf("")
-    private var password by mutableStateOf("")
-    private var registeredEmail=""
-    private var registeredPassword=""
+    private val loginViewModel by viewModels<LoginViewModel>()
+
     private val registerLauncher=registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
         result ->
         if (result.resultCode==RESULT_OK) {
-            registeredEmail=result.data?.getStringExtra("email")?:""
-            registeredPassword=result.data?.getStringExtra("pw")?:""
-
-            email = registeredEmail
-            password = registeredPassword
+            loginViewModel.onRegisterSuccess(
+                email=result.data?.getStringExtra("email")?:"",
+                password=result.data?.getStringExtra("pw")?:""
+            )
 
         }
     }
@@ -67,12 +69,12 @@ class LoginActivity : ComponentActivity() {
             PlaySoptTheme() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LoginScreen(
-                        email = email,
-                        password = password,
-                        onEmailChange = { email = it },
-                        onPasswordChange = { password = it },
+                        email = loginViewModel.email,
+                        password = loginViewModel.password,
+                        onEmailChange = { loginViewModel.onEmailChange(it) },
+                        onPasswordChange = { loginViewModel.onPasswordChange(it) },
                         onLoginClick={ email, password ->
-                            if (email==registeredEmail && password==registeredPassword) {
+                            if (loginViewModel.canLogin()) {
                                 val intent= Intent(
                                     this@LoginActivity,
                                     MainActivity::class.java
